@@ -3,7 +3,7 @@
   "displayName": "zvm-ssh-extension",
   "description": "VSCode extension for CMS files over ssh",
   "publisher": "NealeFerguson",
-  "version": "0.0.1",
+  "version": "0.0.14",
   "engines": {
     "vscode": "^1.96.0"
   },
@@ -13,11 +13,48 @@
   "activationEvents": [],
   "main": "./extension.js",
   "contributes": {
-    "commands": [
-        {
-            "command": "zvm-ssh-extension.connectToZVM",
-            "title": "Connect to z/VM SSH Server"
+    "configuration": {
+      "title": "z/VM SSH Extension",
+      "type": "object",
+      "properties": {
+        "port": {
+          "type": "integer",
+          "default": 22,
+          "minimum": 1,
+          "maximum": 65535,
+          "description": "The port number to use"
+        },
+        "host": {
+          "type": "string",
+          "default": "localhost",
+          "description": "The host address"
+        },
+        "user": {
+          "type": "string",
+          "description": "The username"
+        },
+        "useKey": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to use a key file"
+        },
+        "key": {
+          "type": "string",
+          "description": "Path to the key file",
+          "when": "$.useKey"
+        },
+        "password": {
+          "type": "string",
+          "description": "The password",
+          "when": "!$.useKey"
         }
+      }
+    },
+    "commands": [
+      {
+        "command": "zvm-ssh-extension.connectToZVM",
+        "title": "Connect to z/VM SSH Server"
+      }
     ]
   },
   "scripts": {
@@ -26,11 +63,12 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.96.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
-    "eslint": "^9.16.0",
+    "@types/vscode": "^1.96.0",
     "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.4.1"
+    "@vscode/test-electron": "^2.4.1",
+    "eslint": "^9.16.0",
+    "ssh2": "^1.16.0"
   }
 }
