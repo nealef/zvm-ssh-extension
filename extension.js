@@ -29,15 +29,13 @@ function activate(context) {
             sshConfig['password'] = config.get('password');
         }
 
-        vscode.window.showInformationMessage(JSON.stringify(sshConfig));
-
         // Create the SSH client
         const client = new Client();
 
         // Establish the SSH connection
         client.on('ready', () => {
             vscode.window.showInformationMessage('SSH Connection Established!');
-            client.exec('uptime', (err, stream) => { // Example command (replace with z/VM command)
+            client.exec('ID', (err, stream) => { // Example command (replace with z/VM command)
                 if (err) {
                     vscode.window.showErrorMessage(`SSH Command failed: ${err.message}`);
                     return;
