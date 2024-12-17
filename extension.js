@@ -1,7 +1,9 @@
 // The module 'vscode' contains the VS Code extensibility API
+
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
 const { Client } = require('ssh2');
+const { readFileSync } = require('fs');
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -12,29 +14,22 @@ function activate(context) {
     let connectToZVM = vscode.commands.registerCommand('zvm-ssh-extension.connectToZVM', () => {
         vscode.window.showInformationMessage('Connecting to z/VM SSH server...');
 
-        const config = vscode.workspace.getConfiguration('zvm-ssh');
-
-        const port = config.get('port');
-        const host = config.get('host');
-        const user = config.get('user');
-        const useKey = config.get('useKey');
-        const key = config.get('key');
-        const password = config.get('password');
+        const config = vscode.workspace.getConfiguration();
+        vscode.window.showInformationMessage('Got configuration');
 
         // SSH connection details (adjust with your z/VM SSH server credentials)
-        const sshConfig = {
-            host: host,                  // Replace with the z/VM server hostname/IP
-            port: port,                  // SSH port (typically 22)
-            username: user,              // SSH username
-        };
+        var sshConfig = {};
 
-        if (useKey) {
-            sshConfig['privateKey'] = key;
+        sshConfig['port'] = config.get('port');
+        sshConfig['host'] = config.get('host');
+        sshConfig['username'] = config.get('user');
+        if (config.get('useKey')) {
+            sshConfig['privateKey'] = readFileSync(config.get('key'));
         } else {
-            sshConfig['password'] = password;
+            sshConfig['password'] = config.get('password');
         }
 
-        console.log(sshConfig)
+        vscode.window.showInformationMessage(JSON.stringify(sshConfig));
 
         // Create the SSH client
         const client = new Client();
